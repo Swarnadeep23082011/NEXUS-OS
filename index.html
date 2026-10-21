@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070914">
+<meta name="description" content="NEXUS OS — A futuristic personal command centre designed and developed by Swarnadeep Kha.">
+<title>NEXUS OS | Personal Command Centre</title>
+
+<style>
+:root {
+  --bg:#070914;
+  --panel:rgba(17,23,43,.82);
+  --panel2:rgba(24,31,55,.75);
+  --line:rgba(112,139,205,.18);
+  --text:#edf3ff;
+  --muted:#8490b2;
+  --cyan:#54efff;
+  --blue:#6488ff;
+  --purple:#ad73ff;
+  --green:#5dffc1;
+  --orange:#ffbe72;
+  --red:#ff698b;
+  --radius:20px;
+  --shadow:0 15px 50px rgba(0,0,0,.22);
+}
+body.light {
+  --bg:#eaf0fb;
+  --panel:rgba(255,255,255,.84);
+  --panel2:rgba(241,245,255,.92);
+  --line:rgba(59,78,126,.17);
+  --text:#111a35;
+  --muted:#66718e;
+  --cyan:#087e9b;
+  --blue:#4b62dc;
+  --purple:#8248d5;
+  --green:#148b63;
+  --orange:#b87523;
+  --red:#cf4266;
+  --shadow:0 15px 45px rgba(48,62,100,.09);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--cyan);outline-offset:3px
+}
+button:disabled{opacity:.45;cursor:not-allowed}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--cyan);color:#071018}
+#starfield{position:fixed;inset:0;pointer-events:none;z-index:-2;opacity:.75}
+.ambient{
+  position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+    radial-gradient(ellipse at 15% 0%,rgba(70,82,205,.15),transparent 45%),
+    radial-gradient(ellipse at 90% 30%,rgba(0,209,255,.07),transparent 38%),
+    radial-gradient(ellipse at 45% 100%,rgba(133,68,255,.10),transparent 48%);
+}
+body.light .ambient{opacity:.4}
+.app{max-width:1700px;margin:auto;padding:0 25px 40px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  min-height:78px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:30;
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
+  backdrop-filter:blur(22px);margin-bottom:24px
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(140deg,rgba(84,239,255,.2),rgba(173,115,255,.2));
+  border:1px solid rgba(84,239,255,.5);box-shadow:0 0 24px rgba(84,239,255,.1);
+  color:var(--cyan);font-size:22px;font-weight:900
+}
+.brand-name{font-size:17px;letter-spacing:3px;font-weight:900}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:4px}
+.top-actions{display:flex;align-items:center;gap:9px}
+.icon-btn,.btn{
+  color:var(--text);background:var(--panel2);border:1px solid var(--line);
+  border-radius:12px;padding:10px 13px;transition:.2s
+}
+.icon-btn{min-width:42px;min-height:42px;display:grid;place-items:center}
+.icon-btn:hover,.btn:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.primary{
+  color:#061119;background:linear-gradient(120deg,var(--cyan),#9b9bff);
+  border:0;font-weight:800
+}
+.status-dot{width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;box-shadow:0 0 10px var(--green);margin-right:6px}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:23px}
+.sidebar{align-self:start;position:sticky;top:100px}
+.side-card,.panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);backdrop-filter:blur(18px)
+}
+.side-card{padding:17px;margin-bottom:15px}
+.section-label{
+  color:var(--muted);font-size:10px;letter-spacing:2px;font-weight:800;
+  text-transform:uppercase;margin:4px 9px 12px
+}
+.nav{display:grid;gap:5px}
+.nav button{
+  text-align:left;color:var(--muted);background:transparent;border:1px solid transparent;
+  border-radius:11px;padding:11px 12px;display:flex;align-items:center;gap:11px
+}
+.nav button:hover,.nav button.active{
+  color:var(--text);background:rgba(84,239,255,.08);border-color:rgba(84,239,255,.16)
+}
+.nav .ni{width:20px;text-align:center;font-size:17px}
+.profile-mini{display:flex;align-items:center;gap:11px;margin-bottom:15px}
+.avatar{
+  width:43px;height:43px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#55efff,#a36cff);color:#06111d;font-weight:950;
+  box-shadow:0 0 25px rgba(84,239,255,.13)
+}
+.profile-name{font-size:13px;font-weight:800}
+.profile-role{font-size:11px;color:var(--muted);margin-top:4px}
+.creator{
+  font-size:10px;line-height:1.7;color:var(--muted);border-top:1px solid var(--line);
+  padding-top:12px;margin-top:12px
+}
+.creator strong{color:var(--cyan);letter-spacing:.5px}
+.side-meter{margin-top:12px}
+.meter-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px}
+.progress{height:5px;border-radius:20px;background:var(--line);overflow:hidden}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:20px;transition:width .3s}
+main{min-width:0}
+.hero{
+  position:relative;overflow:hidden;padding:30px;border-radius:26px;
+  background:linear-gradient(120deg,rgba(21,35,66,.91),rgba(29,20,58,.83));
+  border:1px solid rgba(102,140,255,.23);box-shadow:var(--shadow);margin-bottom:21px
+}
+body.light .hero{background:linear-gradient(120deg,#dbefff,#eee4ff)}
+.hero:before{
+  content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+  right:2%;top:-190px;border:1px solid rgba(84,239,255,.18);
+  box-shadow:0 0 0 30px rgba(84,239,255,.025),0 0 0 60px rgba(84,239,255,.02)
+}
+.hero-content{position:relative;z-index:2;max-width:720px}
+.eyebrow{font-size:10px;letter-spacing:3px;color:var(--cyan);font-weight:900}
+h1{font-size:clamp(34px,5vw,65px);line-height:1.02;letter-spacing:-2.5px;margin:17px 0 14px}
+.gradient-text{background:linear-gradient(95deg,var(--cyan),#a9a0ff 60%,#f2a7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;color:var(--muted);line-height:1.8;font-size:14px}
+.hero-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.hero-art{
+  position:absolute;right:5%;top:50%;transform:translateY(-50%);
+  width:min(31%,300px);aspect-ratio:1;display:grid;place-items:center;opacity:.85
+}
+.orb{
+  width:49%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 30% 25%,#d8ffff 0,#60e7ff 7%,#4371e5 27%,#21144f 58%,#080b1b 75%);
+  box-shadow:inset -18px -15px 30px #030511,0 0 45px rgba(84,239,255,.23);
+  animation:float 7s ease-in-out infinite;position:relative
+}
+.orb:after{
+  content:"";position:absolute;left:-38%;right:-38%;top:42%;height:24%;
+  border:3px solid rgba(102,239,255,.68);border-radius:50%;
+  transform:rotate(-24deg);box-shadow:0 0 18px rgba(84,239,255,.3)
+}
+.orbit{
+  position:absolute;width:90%;height:43%;border:1px solid rgba(173,115,255,.45);
+  border-radius:50%;transform:rotate(-35deg);animation:spin 19s linear infinite
+}
+.orbit:after{content:"";position:absolute;right:13%;top:5%;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+@keyframes float{50%{transform:translateY(-12px)}}
+@keyframes spin{to{transform:rotate(325deg)}}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:27px 0 13px}
+.section-head h2{font-size:15px;letter-spacing:1px;margin:0}
+.section-head small{font-size:10px;color:var(--muted);letter-spacing:1px}
+.grid{display:grid;gap:15px}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat{padding:19px;min-width:0}
+.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;gap:6px}
+.stat-icon{font-size:20px}
+.stat-value{font-size:clamp(22px,3vw,31px);font-weight:850;letter-spacing:-1px;margin:14px 0 7px}
+.stat-note{font-size:10px;color:var(--green)}
+.two-col{grid-template-columns:minmax(0,1.35fr) minmax(260px,.85fr)}
+.panel{padding:21px;min-width:0}
+.panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}
+.panel-title h3{font-size:13px;margin:0;letter-spacing:.5px}
+.panel-title span{font-size:10px;color:var(--muted)}
+.clock{font-size:clamp(35px,5vw,58px);font-weight:850;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.date-line{font-size:12px;color:var(--muted);margin-top:4px}
+.clock-zone{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.zone-tag{border:1px solid var(--line);border-radius:10px;padding:8px;font-size:10px;color:var(--cyan)}
+.clock-footer{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:21px}
+.mini-stat{padding:11px;background:var(--panel2);border-radius:12px}
+.mini-stat strong{display:block;font-size:16px;margin-bottom:5px}
+.mini-stat span{font-size:10px;color:var(--muted)}
+.weather-display{display:flex;align-items:center;gap:15px;margin:20px 0}
+.weather-icon{font-size:42px;filter:drop-shadow(0 0 14px rgba(84,239,255,.22))}
+.weather-temp{font-size:35px;font-weight:850;letter-spacing:-1px}
+.weather-desc{font-size:12px;color:var(--muted);margin-top:3px}
+.weather-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.weather-cell{padding:10px 7px;background:var(--panel2);border-radius:10px;text-align:center}
+.weather-cell span{font-size:10px;color:var(--muted);display:block}
+.weather-cell strong{display:block;font-size:13px;margin-top:7px}
+.small-note{font-size:10px;color:var(--muted);line-height:1.6;margin-top:13px}
+.chart-wrap{height:190px;position:relative}
+canvas.chart{width:100%;height:100%;display:block}
+.task-input{display:flex;gap:8px;margin-bottom:15px}
+.field,.textarea,.select{
+  background:var(--panel2);border:1px solid var(--line);color:var(--text);
+  border-radius:11px;padding:11px 12px;width:100%;min-width:0
+}
+.field::placeholder,.textarea::placeholder{color:var(--muted)}
+.task-list{display:grid;gap:8px}
+.task{
+  display:flex;align-items:center;gap:10px;padding:11px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:12px;min-width:0
+}
+.task input{accent-color:var(--cyan);width:16px;height:16px;flex-shrink:0}
+.task-text{flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere}
+.task.done .task-text{text-decoration:line-through;color:var(--muted)}
+.task-meta{font-size:9px;color:var(--muted);margin-top:4px}
+.delete-btn{background:transparent;border:0;color:var(--muted);padding:5px;font-size:16px}
+.delete-btn:hover{color:var(--red)}
+.empty{font-size:12px;color:var(--muted);padding:20px 5px;text-align:center}
+.task-footer{display:flex;justify-content:space-between;gap:10px;margin-top:14px;color:var(--muted);font-size:10px}
+.focus-panel{text-align:center}
+.timer-ring{
+  width:205px;max-width:100%;aspect-ratio:1;margin:18px auto;
+  display:grid;place-items:center;border-radius:50%;
+  background:conic-gradient(var(--cyan) var(--timer-progress,100%),var(--line) 0);
+  padding:5px;box-shadow:0 0 32px rgba(84,239,255,.08)
+}
+.timer-inner{
+  width:100%;height:100%;border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--line)
+}
+.timer-time{font-size:39px;font-weight:850;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.timer-label{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:8px}
+.timer-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pill{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:100px;padding:7px 10px;font-size:10px}
+.pill.active{border-color:var(--cyan);color:var(--cyan);background:rgba(84,239,255,.07)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-day-name{text-align:center;color:var(--muted);font-size:9px;padding:7px 0}
+.cal-day{
+  aspect-ratio:1;border:1px solid transparent;border-radius:9px;
+  background:var(--panel2);color:var(--text);font-size:11px;position:relative
+}
+.cal-day:hover{border-color:var(--cyan)}
+.cal-day.today{border-color:var(--cyan);color:var(--cyan);font-weight:900}
+.cal-day.selected{background:var(--cyan);color:#071019}
+.cal-day.marked:after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--purple);border-radius:50%}
+.cal-day.blank{background:transparent}
+.calendar-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.calendar-controls strong{font-size:12px}
+.cal-events{margin-top:15px;border-top:1px solid var(--line);padding-top:13px}
+.event-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;font-size:11px}
+.event-marker{width:3px;min-height:28px;background:var(--cyan);border-radius:10px}
+.event-item small{display:block;color:var(--muted);margin-top:4px}
+.notes-area{min-height:185px;resize:vertical;line-height:1.7}
+.note-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--muted)}
+.quick-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.quick-action{
+  padding:17px 12px;text-align:left;background:var(--panel);border:1px solid var(--line);
+  border-radius:15px;color:var(--text);transition:.2s
+}
+.quick-action:hover{transform:translateY(-3px);border-color:var(--cyan)}
+.quick-action .qa-icon{font-size:23px;display:block;margin-bottom:13px}
+.quick-action strong{display:block;font-size:11px}
+.quick-action span:last-child{font-size:10px;color:var(--muted);display:block;margin-top:6px}
+.project-list{display:grid;gap:13px}
+.project-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.project-row strong{font-size:11px}
+.project-row small{color:var(--muted);font-size:10px}
+.project-row .progress{grid-column:1/-1}
+.badge{font-size:9px;color:var(--cyan);border:1px solid rgba(84,239,255,.25);padding:5px 7px;border-radius:7px}
+.system-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.system-cell{background:var(--panel2);padding:13px;border-radius:12px}
+.system-cell span{font-size:10px;color:var(--muted);display:block}
+.system-cell strong{font-size:15px;display:block;margin-top:9px}
+.system-bar{height:4px;background:var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
+.system-bar span{height:100%;display:block;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.quote{font-size:17px;line-height:1.6;letter-spacing:-.2px}
+.quote-author{font-size:10px;color:var(--muted);margin-top:12px}
+.footer{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:24px 0 5px;margin-top:30px;border-top:1px solid var(--line);
+  font-size:10px;color:var(--muted)
+}
+.footer strong{color:var(--cyan)}
+.modal-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(2,4,13,.72);
+  backdrop-filter:blur(12px);z-index:100;align-items:center;justify-content:center;padding:16px
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:min(580px,100%);max-height:85vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line);border-radius:22px;
+  padding:23px;box-shadow:0 25px 100px rgba(0,0,0,.45);animation:rise .2s ease
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}
+.modal-head h2{font-size:17px;margin:0}
+.modal-body{font-size:13px;line-height:1.7;color:var(--muted)}
+.modal-body h3{color:var(--text);font-size:13px;margin-top:20px}
+.modal-body label{display:block;color:var(--text);font-size:11px;margin:12px 0 6px}
+.command-box{display:flex;gap:8px;align-items:center}
+.command-results{display:grid;gap:5px;margin-top:15px}
+.command-result{display:flex;justify-content:space-between;gap:10px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text)}
+.command-result small{color:var(--muted)}
+.toast-area{position:fixed;right:18px;bottom:18px;z-index:200;display:grid;gap:8px;max-width:min(340px,calc(100vw - 36px))}
+.toast{
+  padding:13px 16px;border:1px solid rgba(84,239,255,.3);border-radius:13px;
+  background:var(--panel);color:var(--text);box-shadow:var(--shadow);font-size:12px;
+  animation:rise .2s ease
+}
+.boot{
+  position:fixed;inset:0;z-index:300;background:#050711;color:#d9fbff;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  transition:opacity .6s,visibility .6s
+}
+.boot.hide{opacity:0;visibility:hidden;pointer-events:none}
+.boot-inner{width:min(470px,100%);font-family:ui-monospace,SFMono-Regular,monospace}
+.boot-logo{font-size:clamp(38px,10vw,62px);font-weight:900;letter-spacing:7px;color:#54efff;text-shadow:0 0 24px rgba(84,239,255,.3)}
+.boot-sub{font-size:10px;letter-spacing:3px;color:#879ab8;margin-top:9px}
+.boot-line{font-size:11px;color:#91a9c8;margin-top:30px;line-height:2}
+.boot-progress{height:3px;background:#18223a;margin-top:20px;overflow:hidden}
+.boot-progress span{display:block;height:100%;width:0;background:#54efff;box-shadow:0 0 15px #54efff;animation:bootload 1.8s ease forwards}
+@keyframes bootload{to{width:100%}}
+.boot-credit{font-size:10px;color:#6d829f;margin-top:28px;letter-spacing:1px}
+.mobile-menu{display:none}
+body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{
+  animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important
+}
+@media(max-width:1050px){
+  .layout{grid-template-columns:190px minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two-col{grid-template-columns:1fr}
+  .hero-art{right:2%;opacity:.42}
+}
+@media(max-width:760px){
+  .app{padding:0 13px 25px}
+  .topbar{min-height:67px;margin-bottom:16px}
+  .brand-name{font-size:14px;letter-spacing:2px}
+  .brand-sub{font-size:8px;letter-spacing:1px}
+  .logo{width:37px;height:37px}
+  .top-actions{gap:5px}
+  .top-actions .btn{padding:9px;font-size:11px}
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:static;display:none}
+  .sidebar.mobile-open{display:block}
+  .mobile-menu{display:grid}
+  .hero{padding:23px 19px}
+  .hero-art{width:43%;right:-8%;top:72%;opacity:.27}
+  h1{letter-spacing:-1.5px}
+  .hero p{font-size:12px}
+  .stats{gap:9px}
+  .stat{padding:14px}
+  .stat-value{margin:10px 0 5px}
+  .panel{padding:16px}
+  .two-col{grid-template-columns:1fr}
+  .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .system-grid{grid-template-columns:repeat(2,1fr)}
+  .section-head{margin-top:22px}
+  .clock{font-size:43px}
+  .footer{font-size:9px}
+}
+@media(max-width:380px){
+  .top-actions .hide-xs{display:none}
+  .brand-name{font-size:12px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clock-footer{gap:5px}
+  .mini-stat{padding:8px}
+  .mini-stat strong{font-size:14px}
+  .task-input{flex-wrap:wrap}
+  .task-input .field{flex:1 1 100%}
+}
+</style>
+</head>
+
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="ambient" aria-hidden="true"></div>
+
+<div class="boot" id="boot" aria-label="NEXUS OS startup">
+  <div class="boot-inner">
+    <div class="boot-logo">NEXUS<span style="color:#a778ff">.</span></div>
+    <div class="boot-sub">PERSONAL COMMAND INTERFACE / VERSION 4.2</div>
+    <div class="boot-line" id="bootLines">
+      &gt; Initializing personal environment...<br>
+      &gt; Loading interface modules...<br>
+      &gt; Establishing local workspace...
+    </div>
+    <div class="boot-progress"><span></span></div>
+    <div class="boot-credit">DESIGNED &amp; DEVELOPED BY SWARNADEEP KHA</div>
+  </div>
+</div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">N</div>
+      <div>
+        <div class="brand-name">NEXUS OS</div>
+        <div class="brand-sub">PERSONAL COMMAND CENTRE</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="commandOpen" aria-label="Open command palette" title="Command palette · Ctrl+K">⌕</button>
+      <button class="icon-btn hide-xs" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">◐</button>
+      <button class="icon-btn hide-xs" id="motionToggle" aria-label="Toggle animations" title="Toggle motion">✧</button>
+      <button class="btn primary" id="focusJump">◉ Focus</button>
+      <button class="icon-btn mobile-menu" id="menuToggle" aria-label="Toggle navigation">☰</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-card">
+        <div class="profile-mini">
+          <div class="avatar">SK</div>
+          <div>
+            <div class="profile-name">Swarnadeep Kha</div>
+            <div class="profile-role">System Administrator</div>
+          </div>
+        </div>
+        <div class="creator">
+          PERSONAL WORKSPACE<br>
+          <strong>CREATED BY SWARNADEEP KHA</strong>
+        </div>
+        <div class="side-meter">
+          <div class="meter-label"><span>Daily mission</span><strong id="sidePercent">0%</strong></div>
+          <div class="progress"><span id="sideProgress" style="width:0%"></span></div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="section-label">Workspace</div>
+        <nav class="nav" aria-label="Main navigation">
+          <button class="active" data-target="overview"><span class="ni">⌂</span>Overview</button>
+          <button data-target="tasks"><span class="ni">☷</span>Task manager</button>
+          <button data-target="focus"><span class="ni">◉</span>Focus studio</button>
+          <button data-target="calendar"><span class="ni">▦</span>Calendar</button>
+          <button data-target="notes"><span class="ni">✎</span>Notes vault</button>
+          <button data-target="analytics"><span class="ni">⌁</span>Analytics</button>
+          <button data-target="system"><span class="ni">⚙</span>System status</button>
+        </nav>
+      </div>
+
+      <div class="side-card">
+        <div class="section-label">System</div>
+        <div style="font-size:11px;line-height:2.1;color:var(--muted)">
+          <div><span class="status-dot"></span>Core services online</div>
+          <div>◈ Local storage enabled</div>
+          <div>◇ Privacy mode active</div>
+        </div>
+        <button class="btn" id="aboutOpen" style="width:100%;margin-top:13px">ⓘ About NEXUS</button>
+      </div>
+    </aside>
+
+    <main id="overview">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="eyebrow"><span class="status-dot"></span> SYSTEM ONLINE / PERSONAL SPACE</div>
+          <h1>Take control of<br>your <span class="gradient-text">universe.</span></h1>
+          <p>Your personal command centre for focus, planning, ideas and progress. One space. Clear priorities. Your next move starts here.</p>
+          <div class="hero-buttons">
+            <button class="btn primary" id="heroFocus">Launch focus mode ↗</button>
+            <button class="btn" id="heroTask">＋ New task</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit"></div><div class="orb"></div>
+        </div>
+      </section>
+
+      <div class="section-head">
+        <h2>◈ LIVE OVERVIEW</h2>
+        <small id="overviewDate">LOCAL SYSTEM TIME</small>
+      </div>
+
+      <section class="grid stats" aria-label="Productivity overview">
+        <article class="panel stat">
+          <div class="stat-top"><span>Tasks completed</span><span class="stat-icon">✓</span></div>
+          <div class="stat-value" id="completedStat">0</div>
+          <div class="stat-note">Your progress, your pace</div>
+        </article>
+        <article class="panel stat">
+          <div class="stat-top"><span>Tasks remaining</span><span class="stat-icon">⌁</span></div>
+          <div class="stat-value" id="remainingStat">0</div>
+          <div class="stat-note" style="color:var(--cyan)">Keep moving forward</div>
+        </article>
+        <article class="panel stat">
+          <div class="stat-top"><span>Focus sessions</span><span class="stat-icon">◉</span></div>
+          <div class="stat-value" id="sessionsStat">0</div>
+          <div class="stat-note">Completed sessions</div>
+        </article>
+        <article class="panel stat">
+          <div class="stat-top"><span>Focus minutes</span><span class="stat-icon">ϟ</span></div>
+          <div class="stat-value" id="minutesStat">0</div>
+          <div class="stat-note">Time invested today</div>
+        </article>
+      </section>
+
+      <div class="section-head"><h2>⌁ COMMAND DECK</h2><small>YOUR SPACE AT A GLANCE</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="panel-title"><h3>◷ TEMPORAL DISPLAY</h3><span>LOCAL TIME</span></div>
+          <div class="clock-zone">
+            <div>
+              <div class="clock" id="clock">00:00:00</div>
+              <div class="date-line" id="dateLine">Loading date...</div>
+            </div>
+            <div class="zone-tag" id="timezone">LOCAL ZONE</div>
+          </div>
+          <div class="clock-footer">
+            <div class="mini-stat"><strong id="dayOfYear">—</strong><span>Day of year</span></div>
+            <div class="mini-stat"><strong id="weekNumber">—</strong><span>Week number</span></div>
+            <div class="mini-stat"><strong id="yearProgress">—</strong><span>Year elapsed</span></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><h3>☼ ENVIRONMENT MODULE</h3><span>DEMO MODE</span></div>
+          <div class="weather-display">
+            <div class="weather-icon">◌</div>
+            <div>
+              <div class="weather-temp">--°</div>
+              <div class="weather-desc">Connect a weather API for live conditions</div>
+            </div>
+          </div>
+          <div class="weather-grid">
+            <div class="weather-cell"><span>Humidity</span><strong>--</strong></div>
+            <div class="weather-cell"><span>Wind</span><strong>--</strong></div>
+            <div class="weather-cell"><span>UV index</span><strong>--</strong></div>
+          </div>
+          <div class="small-note">Weather is a placeholder. Live weather needs an external API and a location permission or manually selected city.</div>
+        </article>
+      </section>
+
+      <div class="section-head" id="analytics"><h2>⌁ PERFORMANCE TELEMETRY</h2><small>LOCAL ACTIVITY</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="panel-title"><h3>Weekly productivity</h3><span>LAST 7 DAYS</span></div>
+          <div class="chart-wrap"><canvas id="productivityChart" class="chart" role="img" aria-label="Bar chart showing focus minutes over the last seven days"></canvas></div>
+          <div class="small-note">Focus minutes are recorded locally when you complete a focus session.</div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><h3>Mission progress</h3><span id="missionCount">0 MISSIONS</span></div>
+          <div class="project-list" id="projectList">
+            <div class="project-row"><div><strong>Daily tasks</strong><br><small>Complete your task list</small></div><span class="badge" id="taskBadge">0%</span><div class="progress"><span id="taskProgress" style="width:0%"></span></div></div>
+            <div class="project-row"><div><strong>Focus discipline</strong><br><small>Finish a focus session</small></div><span class="badge" id="focusBadge">0%</span><div class="progress"><span id="focusProgress" style="width:0%"></span></div></div>
+            <div class="project-row"><div><strong>Knowledge vault</strong><br><small>Save a note</small></div><span class="badge" id="notesBadge">0%</span><div class="progress"><span id="notesProgress" style="width:0%"></span></div></div>
+          </div>
+          <div class="small-note">Progress updates automatically as you use NEXUS.</div>
+        </article>
+      </section>
+
+      <div class="section-head" id="tasks"><h2>☷ TASK COMMAND</h2><small>LOCAL TASK MANAGER</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="panel-title"><h3>Mission queue</h3><span id="taskCount">0 TASKS</span></div>
+          <form class="task-input" id="taskForm">
+            <input class="field" id="taskInput" maxlength="180" placeholder="Add a mission to your queue..." aria-label="New task" required>
+            <button class="btn primary" type="submit">＋ Add</button>
+          </form>
+          <div class="task-list" id="taskList"></div>
+          <div class="task-footer"><span id="taskSummary">No tasks yet</span><button class="btn" id="clearCompleted" style="padding:6px 9px;font-size:10px">Clear completed</button></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><h3>Quick command shortcuts</h3><span>EXECUTE</span></div>
+          <div class="grid quick-grid">
+            <button class="quick-action" data-command="task"><span class="qa-icon">＋</span><strong>New mission</strong><span>Add a task</span></button>
+            <button class="quick-action" data-command="focus"><span class="qa-icon">◉</span><strong>Deep focus</strong><span>Start a session</span></button>
+            <button class="quick-action" data-command="note"><span class="qa-icon">✎</span><strong>Capture idea</strong><span>Open notes</span></button>
+            <button class="quick-action" data-command="calendar"><span class="qa-icon">▦</span><strong>View calendar</strong><span>Plan your time</span></button>
+          </div>
+          <div class="section-head"><h2>DAILY DIRECTIVE</h2></div>
+          <div class="quote" id="dailyQuote">“The secret of getting ahead is getting started.”</div>
+          <div class="quote-author" id="quoteAuthor">— MARK TWAIN</div>
+          <button class="btn" id="newQuote" style="margin-top:17px">↻ New directive</button>
+        </article>
+      </section>
+
+      <div class="section-head" id="focus"><h2>◉ FOCUS STUDIO</h2><small>PROTECT YOUR ATTENTION</small></div>
+      <section class="grid two-col">
+        <article class="panel focus-panel">
+          <div class="panel-title"><h3>Focus timer</h3><span id="timerStatus">READY</span></div>
+          <div class="pills" aria-label="Choose timer mode">
+            <button class="pill active" data-minutes="25" data-mode="FOCUS">Focus · 25m</button>
+            <button class="pill" data-minutes="5" data-mode="SHORT BREAK">Short break · 5m</button>
+            <button class="pill" data-minutes="15" data-mode="LONG BREAK">Long break · 15m</button>
+          </div>
+          <div class="timer-ring" id="timerRing" style="--timer-progress:100%">
+            <div class="timer-inner">
+              <div class="timer-time" id="timerDisplay">25:00</div>
+              <div class="timer-label" id="timerMode">FOCUS SESSION</div>
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button class="btn primary" id="timerStart">▶ Start</button>
+            <button class="btn" id="timerReset">↻ Reset</button>
+          </div>
+          <div class="small-note">Stay with one task until the timer ends. A completed focus session is recorded locally.</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title"><h3>Focus protocol</h3><span>FIELD GUIDE</span></div>
+          <div class="project-list">
+            <div class="project-row"><div><strong>01 / Define the objective</strong><br><small>Write down one specific outcome.</small></div><span class="badge">PREPARE</span></div>
+            <div class="project-row"><div><strong>02 / Remove distractions</strong><br><small>Silence alerts and close extra tabs.</small></div><span class="badge">ISOLATE</span></div>
+            <div class="project-row"><div><strong>03 / Enter deep work</strong><br><small>Work on one thing at a time.</small></div><span class="badge">EXECUTE</span></div>
+            <div class="project-row"><div><strong>04 / Review and recover</strong><br><small>Take a break and record progress.</small></div><span class="badge">RECHARGE</span></div>
+          </div>
+          <div class="section-head"><h2>SESSION LOG</h2></div>
+          <div class="system-grid">
+            <div class="system-cell"><span>Sessions</span><strong id="focusSessions">0</strong></div>
+            <div class="system-cell"><span>Minutes</span><strong id="focusMinutes">0</strong></div>
+            <div class="system-cell"><span>Next break</span><strong id="breakHint">25m</strong></div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head" id="calendar"><h2>▦ TEMPORAL PLANNER</h2><small>CALENDAR &amp; EVENTS</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="calendar-controls">
+            <button class="icon-btn" id="prevMonth" aria-label="Previous month">‹</button>
+            <strong id="monthLabel">Month Year</strong>
+            <button class="icon-btn" id="nextMonth" aria-label="Next month">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid" aria-label="Calendar"></div>
+          <div class="small-note">Select a date to view or add an event. Calendar events are stored on this device.</div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><h3 id="eventDateTitle">Selected date</h3><span>AGENDA</span></div>
+          <form id="eventForm">
+            <input class="field" id="eventTitle" maxlength="100" placeholder="Event title..." required>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input class="field" id="eventTime" type="time" aria-label="Event time" value="09:00" style="max-width:145px">
+              <button class="btn primary" type="submit">＋ Add event</button>
+            </div>
+          </form>
+          <div class="cal-events" id="eventList"></div>
+        </article>
+      </section>
+
+      <div class="section-head" id="notes"><h2>✎ KNOWLEDGE VAULT</h2><small>PRIVATE LOCAL NOTES</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="panel-title"><h3>Idea capture</h3><span id="noteStatus">AUTOSAVE ENABLED</span></div>
+          <input class="field" id="noteTitle" maxlength="100" placeholder="Give this note a title..." style="margin-bottom:10px">
+          <textarea class="field notes-area" id="noteBody" maxlength="20000" placeholder="Capture an idea, plan, reflection, or anything worth remembering..."></textarea>
+          <div class="note-footer">
+            <span id="noteCount">0 characters</span>
+            <div style="display:flex;gap:7px">
+              <button class="btn" id="newNote">New note</button>
+              <button class="btn primary" id="saveNote">Save note</button>
+            </div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><h3>Saved entries</h3><span id="savedNoteCount">0 NOTES</span></div>
+          <input class="field" id="noteSearch" placeholder="Search saved notes..." aria-label="Search notes" style="margin-bottom:12px">
+          <div class="task-list" id="notesList"></div>
+          <div class="small-note">Notes are saved in this browser on this device. They are not uploaded to a server.</div>
+        </article>
+      </section>
+
+      <div class="section-head" id="system"><h2>⚙ SYSTEM TELEMETRY</h2><small>CLIENT-SIDE STATUS</small></div>
+      <section class="grid two-col">
+        <article class="panel">
+          <div class="panel-title"><h3>Environment monitor</h3><span>SIMULATED METRICS</span></div>
+          <div class="system-grid">
+            <div class="system-cell"><span>Interface</span><strong>ONLINE</strong><div class="system-bar"><span style="width:100%"></span></div></div>
+            <div class="system-cell"><span>Local storage</span><strong id="storageState">CHECKING</strong><div class="system-bar"><span id="storageBar" style="width:90%"></span></div></div>
+            <div class="system-cell"><span>Connectivity</span><strong id="networkState">UNKNOWN</strong><div class="system-bar"><span id="networkBar" style="width:70%"></span></div></div>
+            <div class="system-cell"><span>Screen class</span><strong id="screenState">—</strong><div class="system-bar"><span id="screenBar" style="width:75%"></span></div></div>
+            <div class="system-cell"><span>Motion mode</span><strong id="motionState">NORMAL</strong><div class="system-bar"><span id="motionBar" style="width:100%"></span></div></div>
+            <div class="system-cell"><span>Data privacy</span><strong>LOCAL</strong><div class="system-bar"><span style="width:100%"></span></div></div>
+          </div>
+          <div class="small-note">These are interface diagnostics, not measurements of CPU, RAM, battery health, or actual hardware performance.</div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><h3>Workspace control</h3><span>SETTINGS</span></div>
+          <div class="project-list">
+            <div class="project-row"><div><strong>Visual theme</strong><br><small>Switch between dark and light.</small></div><button class="btn" id="settingsTheme">Toggle</button></div>
+            <div class="project-row"><div><strong>Motion effects</strong><br><small>Reduce animation and movement.</small></div><button class="btn" id="settingsMotion">Toggle</button></div>
+            <div class="project-row"><div><strong>Export workspace</strong><br><small>Download tasks, notes and events.</small></div><button class="btn" id="exportData">Export</button></div>
+            <div class="project-row"><div><strong>Import workspace</strong><br><small>Restore a NEXUS JSON backup.</small></div><button class="btn" id="importButton">Import</button><input type="file" id="importFile" accept=".json,application/json" hidden></div>
+            <div class="project-row"><div><strong>Clear local data</strong><br><small>Remove this workspace from this browser.</small></div><button class="btn" id="clearData" style="color:var(--red)">Reset</button></div>
+          </div>
+          <div class="creator" style="margin-top:18px">
+            NEXUS OS / PERSONAL EDITION<br>
+            <strong>DESIGNED &amp; DEVELOPED BY SWARNADEEP KHA</strong><br>
+            Built with HTML, CSS and JavaScript.
+          </div>
+        </article>
+      </section>
+
+      <footer class="footer">
+        <span>© <span id="footerYear"></span> NEXUS OS · Personal Command Centre</span>
+        <span>Designed &amp; developed by <strong>Swarnadeep Kha</strong></span>
+        <span><span class="status-dot"></span> All local systems operational</span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">NEXUS</h2>
+      <button class="icon-btn" id="modalClose" aria-label="Close dialog">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast-area" id="toastArea" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   NEXUS OS — PERSONAL COMMAND CENTRE
+   Designed & Developed by Swarnadeep Kha
+   Single-file, client-side application.
+   ============================================================ */
+
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const STORAGE_KEY = "nexusOS_swarnadeep_v1";
+
+const todayKey = (date = new Date()) =>
+  `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+
+function safeParse(value, fallback) {
+  try { return value ? JSON.parse(value) : fallback; }
+  catch { return fallback; }
+}
+
+function createId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+function defaultData() {
+  return {
+    tasks: [],
+    notes: [],
+    events: {},
+    focus: {sessions:0, minutes:0, history:{}},
+    settings: {theme:"dark", reducedMotion:false},
+    noteDraft: {title:"",body:""}
+  };
+}
+
+let data = Object.assign(defaultData(), safeParse(localStorage.getItem(STORAGE_KEY), {}));
+data.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+data.notes = Array.isArray(data.notes) ? data.notes : [];
+data.events = data.events && typeof data.events === "object" ? data.events : {};
+data.focus = Object.assign(defaultData().focus, data.focus || {});
+data.settings = Object.assign(defaultData().settings, data.settings || {});
+
+function persist() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    toast("Unable to save data. Browser storage may be full or disabled.");
+    return false;
+  }
+}
+
+function toast(message) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = message;
+  $("#toastArea").appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[char]);
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+}
+
+/* Animated background */
+const starCanvas = $("#starfield");
+const starCtx = starCanvas.getContext("2d");
+let stars = [];
+let starWidth = 0, starHeight = 0, animationFrame = null;
+
+function resizeStars() {
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  starWidth = window.innerWidth;
+  starHeight = window.innerHeight;
+  starCanvas.width = starWidth * ratio;
+  starCanvas.height = starHeight * ratio;
+  starCanvas.style.width = starWidth + "px";
+  starCanvas.style.height = starHeight + "px";
+  starCtx.setTransform(ratio,0,0,ratio,0,0);
+  stars = Array.from({length:Math.min(180,Math.floor(starWidth*starHeight/6500))},() => ({
+    x:Math.random()*starWidth,
+    y:Math.random()*starHeight,
+    r:Math.random()*1.35+.2,
+    a:Math.random()*.6+.15,
+    speed:Math.random()*.16+.025,
+    phase:Math.random()*Math.PI*2
+  }));
+}
+
+function drawStars(time = 0) {
+  starCtx.clearRect(0,0,starWidth,starHeight);
+  const reduced = document.body.classList.contains("reduce-motion");
+  for (const star of stars) {
+    const twinkle = reduced ? star.a : star.a*(.7+.3*Math.sin(time*.001+star.phase));
+    starCtx.beginPath();
+    starCtx.arc(star.x,star.y,star.r,0,Math.PI*2);
+    starCtx.fillStyle = `rgba(145,220,255,${twinkle})`;
+    starCtx.fill();
+    if (!reduced) {
+      star.y += star.speed;
+      if (star.y > starHeight) {star.y=0;star.x=Math.random()*starWidth;}
+    }
+  }
+  animationFrame = requestAnimationFrame(drawStars);
+}
+
+resizeStars();
+drawStars();
+window.addEventListener("resize", resizeStars);
+
+/* Theme and accessibility */
+function applySettings() {
+  document.body.classList.toggle("light", data.settings.theme === "light");
+  document.body.classList.toggle("reduce-motion", !!data.settings.reducedMotion);
+  $("#motionState").textContent = data.settings.reducedMotion ? "REDUCED" : "NORMAL";
+  $("#motionBar").style.width = data.settings.reducedMotion ? "35%" : "100%";
+  $("#themeToggle").textContent = data.settings.theme === "light" ? "☾" : "◐";
+}
+
+function toggleTheme() {
+  data.settings.theme = data.settings.theme === "light" ? "dark" : "light";
+  persist(); applySettings(); drawChart();
+  toast(`Switched to ${data.settings.theme} mode.`);
+}
+
+function toggleMotion() {
+  data.settings.reducedMotion = !data.settings.reducedMotion;
+  persist(); applySettings();
+  toast(data.settings.reducedMotion ? "Reduced motion enabled." : "Motion effects enabled.");
+}
+
+$("#themeToggle").addEventListener("click",toggleTheme);
+$("#settingsTheme").addEventListener("click",toggleTheme);
+$("#motionToggle").addEventListener("click",toggleMotion);
+$("#settingsMotion").addEventListener("click",toggleMotion);
+applySettings();
+
+/* Clock and temporal display */
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(),0,0);
+  return Math.floor((date-start)/86400000);
+}
+function getWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-yearStart)/86400000)+1)/7);
+}
+
+function updateClock() {
+  const now = new Date();
+  $("#clock").textContent = now.toLocaleTimeString(undefined,{hour12:false});
+  $("#dateLine").textContent = formatDate(now);
+  $("#timezone").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "LOCAL ZONE";
+  $("#overviewDate").textContent = now.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}).toUpperCase();
+  $("#dayOfYear").textContent = getDayOfYear(now);
+  $("#weekNumber").textContent = "W" + getWeekNumber(now);
+  const yearStart = new Date(now.getFullYear(),0,1);
+  const yearEnd = new Date(now.getFullYear()+1,0,1);
+  $("#yearProgress").textContent = Math.round((now-yearStart)/(yearEnd-yearStart)*100)+"%";
+  $("#footerYear").textContent = now.getFullYear();
+}
+updateClock();
+setInterval(updateClock,1000);
+
+/* Navigation */
+function navigateTo(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({behavior:data.settings.reducedMotion?"auto":"smooth",block:"start"});
+  $$(".nav button").forEach(button => button.classList.toggle("active",button.dataset.target===id));
+  $("#sidebar").classList.remove("mobile-open");
+}
+
+$$(".nav button").forEach(button => button.addEventListener("click",()=>navigateTo(button.dataset.target)));
+$("#menuToggle").addEventListener("click",()=>$("#sidebar").classList.toggle("mobile-open"));
+
+/* Tasks */
+function addTask(title) {
+  const clean = title.trim();
+  if (!clean) return;
+  data.tasks.unshift({id:createId(),title:clean,done:false,created:Date.now(),date:todayKey()});
+  persist(); renderTasks(); updateDashboard();
+  $("#taskInput").value = "";
+  toast("Mission added to the queue.");
+}
+
+function renderTasks() {
+  const list = $("#taskList");
+  list.replaceChildren();
+  if (!data.tasks.length) {
+    list.innerHTML = '<div class="empty">Your mission queue is clear.<br>Add a task to begin.</div>';
+  } else {
+    data.tasks.forEach(task => {
+      const row = document.createElement("div");
+      row.className = "task" + (task.done ? " done" : "");
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.checked = !!task.done;
+      check.setAttribute("aria-label","Mark task complete");
+      check.addEventListener("change",()=>{
+        task.done = check.checked;
+        persist(); renderTasks(); updateDashboard();
+      });
+      const text = document.createElement("div");
+      text.className = "task-text";
+      const title = document.createElement("div");
+      title.textContent = task.title;
+      const meta = document.createElement("div");
+      meta.className = "task-meta";
+      meta.textContent = "Added " + new Date(task.created).toLocaleDateString();
+      text.append(title,meta);
+      const remove = document.createElement("button");
+      remove.className = "delete-btn";
+      remove.textContent = "×";
+      remove.setAttribute("aria-label","Delete task");
+      remove.addEventListener("click",()=>{
+        data.tasks = data.tasks.filter(item=>item.id!==task.id);
+        persist(); renderTasks(); updateDashboard(); toast("Task removed.");
+      });
+      row.append(check,text,remove);
+      list.appendChild(row);
+    });
+  }
+  const completed = data.tasks.filter(task=>task.done).length;
+  const remaining = data.tasks.length-completed;
+  $("#taskCount").textContent = `${data.tasks.length} TASK${data.tasks.length===1?"":"S"}`;
+  $("#taskSummary").textContent = `${completed} completed · ${remaining} remaining`;
+  $("#completedStat").textContent = completed;
+  $("#remainingStat").textContent = remaining;
+}
+
+$("#taskForm").addEventListener("submit",event=>{
+  event.preventDefault(); addTask($("#taskInput").value);
+});
+$("#heroTask").addEventListener("click",()=>{
+  navigateTo("tasks"); $("#taskInput").focus();
+});
+$("#clearCompleted").addEventListener("click",()=>{
+  const count = data.tasks.filter(task=>task.done).length;
+  if (!count) return toast("No completed tasks to clear.");
+  data.tasks = data.tasks.filter(task=>!task.done);
+  persist(); renderTasks(); updateDashboard(); toast(`${count} completed task(s) cleared.`);
+});
+
+/* Focus timer */
+let timerMode = "FOCUS";
+let timerDuration = 25*60;
+let timerRemaining = timerDuration;
+let timerRunning = false;
+let timerInterval = null;
+let timerEndsAt = 0;
+
+function formatTimer(seconds) {
+  const safe = Math.max(0,Math.ceil(seconds));
+  return `${String(Math.floor(safe/60)).padStart(2,"0")}:${String(safe%60).padStart(2,"0")}`;
+}
+
+function renderTimer() {
+  $("#timerDisplay").textContent = formatTimer(timerRemaining);
+  $("#timerMode").textContent = timerMode + (timerMode==="FOCUS" ? " SESSION" : "");
+  $("#timerStatus").textContent = timerRunning ? "RUNNING" : "READY";
+  $("#timerStart").textContent = timerRunning ? "Ⅱ Pause" : "▶ Start";
+  $("#timerRing").style.setProperty("--timer-progress",`${Math.max(0,Math.min(100,timerRemaining/timerDuration*100))}%`);
+  $("#breakHint").textContent = timerMode==="FOCUS" ? Math.ceil(timerRemaining/60)+"m" : "—";
+}
+
+function setTimer(minutes,mode) {
+  stopTimer();
+  timerMode = mode;
+  timerDuration = minutes*60;
+  timerRemaining = timerDuration;
+  $$(".pill").forEach(button=>button.classList.toggle("active",button.dataset.mode===mode));
+  renderTimer();
+}
+
+function stopTimer() {
+  timerRunning = false;
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function completeTimer() {
+  stopTimer();
+  timerRemaining = 0;
+  if (timerMode==="FOCUS") {
+    data.focus.sessions = (data.focus.sessions||0)+1;
+    data.focus.minutes = (data.focus.minutes||0) + Math.round(timerDuration/60);
+    const key = todayKey();
+    data.focus.history[key] = (data.focus.history[key]||0)+Math.round(timerDuration/60);
+    persist(); updateDashboard(); drawChart();
+    toast("Focus session complete. Excellent work.");
+  } else {
+    toast("Break complete. Ready for the next mission?");
+  }
+  renderTimer();
+  $("#timerStatus").textContent = "COMPLETE";
+}
+
+function startTimer() {
+  if (timerRunning) {
+    stopTimer(); renderTimer(); return;
+  }
+  if (timerRemaining<=0) timerRemaining=timerDuration;
+  timerRunning = true;
+  timerEndsAt = Date.now()+timerRemaining*1000;
+  timerInterval = setInterval(()=>{
+    timerRemaining = Math.max(0,Math.ceil((timerEndsAt-Date.now())/1000));
+    renderTimer();
+    if (timerRemaining<=0) completeTimer();
+  },250);
+  renderTimer();
+}
+$("#timerStart").addEventListener("click",startTimer);
+$("#timerReset").addEventListener("click",()=>{
+  stopTimer();timerRemaining=timerDuration;renderTimer();toast("Timer reset.");
+});
+$$(".pill[data-minutes]").forEach(button=>button.addEventListener("click",()=>setTimer(Number(button.dataset.minutes),button.dataset.mode)));
+$("#focusJump").addEventListener("click",()=>navigateTo("focus"));
+$("#heroFocus").addEventListener("click",()=>{navigateTo("focus");if(!timerRunning)startTimer();});
+$("#focusJump").addEventListener("click",()=>{});
+
+/* Calendar and events */
+let calendarView = new Date();
+let selectedDate = todayKey();
+
+function parseDateKey(key) {
+  const [year,month,day] = key.split("-").map(Number);
+  return new Date(year,month-1,day);
+}
+
+function renderCalendar() {
+  const year = calendarView.getFullYear();
+  const month = calendarView.getMonth();
+  $("#monthLabel").textContent = calendarView.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  const grid = $("#calendarGrid");
+  grid.replaceChildren();
+  ["S","M","T","W","T","F","S"].forEach(day=>{
+    const el=document.createElement("div");
+    el.className="cal-day-name";el.textContent=day;grid.appendChild(el);
+  });
+  const first = new Date(year,month,1).getDay();
+  const days = new Date(year,month+1,0).getDate();
+  for(let i=0;i<first;i++){
+    const blank=document.createElement("div");blank.className="cal-day blank";grid.appendChild(blank);
+  }
+  for(let day=1;day<=days;day++){
+    const dateKey=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const button=document.createElement("button");
+    button.className="cal-day";
+    button.textContent=day;
+    button.setAttribute("aria-label",formatDate(new Date(year,month,day)));
+    if(dateKey===todayKey())button.classList.add("today");
+    if(dateKey===selectedDate)button.classList.add("selected");
+    if((data.events[dateKey]||[]).length)button.classList.add("marked");
+    button.addEventListener("click",()=>{selectedDate=dateKey;renderCalendar();renderEvents();});
+    grid.appendChild(button);
+  }
+  renderEvents();
+}
+
+function renderEvents() {
+  const date = parseDateKey(selectedDate);
+  $("#eventDateTitle").textContent=date.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+  const list=$("#eventList");list.replaceChildren();
+  const events=(data.events[selectedDate]||[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  if(!events.length){
+    list.innerHTML='<div class="empty">No events scheduled for this date.</div>';return;
+  }
+  events.forEach(event=>{
+    const row=document.createElement("div");row.className="event-item";
+    const marker=document.createElement("div");marker.className="event-marker";
+    const body=document.createElement("div");body.style.flex="1";
+    const title=document.createElement("strong");title.textContent=event.title;
+    const time=document.createElement("small");time.textContent=event.time||"No time set";
+    body.append(title,time);
+    const remove=document.createElement("button");remove.className="delete-btn";remove.textContent="×";
+    remove.setAttribute("aria-label","Delete event");
+    remove.addEventListener("click",()=>{
+      data.events[selectedDate]=(data.events[selectedDate]||[]).filter(item=>item.id!==event.id);
+      persist();renderCalendar();toast("Event deleted.");
+    });
+    row.append(marker,body,remove);list.appendChild(row);
+  });
+}
+
+$("#prevMonth").addEventListener("click",()=>{calendarView.setMonth(calendarView.getMonth()-1);renderCalendar();});
+$("#nextMonth").addEventListener("click",()=>{calendarView.setMonth(calendarView.getMonth()+1);renderCalendar();});
+$("#eventForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const title=$("#eventTitle").value.trim();
+  if(!title)return;
+  if(!data.events[selectedDate])data.events[selectedDate]=[];
+  data.events[selectedDate].push({id:createId(),title,time:$("#eventTime").value||"",created:Date.now()});
+  persist();$("#eventTitle").value="";renderCalendar();toast("Event added to your agenda.");
+});
+
+/* Notes vault */
+let activeNoteId = null;
+
+function renderNotes() {
+  const query=$("#noteSearch").value.trim().toLowerCase();
+  const list=$("#notesList");list.replaceChildren();
+  const filtered=data.notes.filter(note=>(note.title+" "+note.body).toLowerCase().includes(query));
+  $("#savedNoteCount").textContent=`${data.notes.length} NOTE${data.notes.length===1?"":"S"}`;
+  if(!filtered.length){
+    list.innerHTML='<div class="empty">No matching notes. Capture your first idea.</div>';return;
+  }
+  filtered.forEach(note=>{
+    const row=document.createElement("div");row.className="task";
+    const content=document.createElement("button");
+    content.style.cssText="flex:1;min-width:0;text-align:left;background:transparent;border:0;color:var(--text);padding:0";
+    const title=document.createElement("div");title.style.fontSize="12px";title.style.fontWeight="800";
+    title.textContent=note.title||"Untitled note";
+    const excerpt=document.createElement("div");excerpt.style.cssText="font-size:10px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere";
+    excerpt.textContent=(note.body||"").slice(0,75)||"No content";
+    content.append(title,excerpt);
+    content.addEventListener("click",()=>{
+      activeNoteId=note.id;$("#noteTitle").value=note.title;$("#noteBody").value=note.body;
+      updateNoteCount();navigateTo("notes");
+    });
+    const remove=document.createElement("button");remove.className="delete-btn";remove.textContent="×";
+    remove.setAttribute("aria-label","Delete note");
+    remove.addEventListener("click",()=>{
+      if(!confirm("Delete this note?"))return;
+      data.notes=data.notes.filter(item=>item.id!==note.id);
+      if(activeNoteId===note.id)clearNoteEditor();
+      persist();renderNotes();updateDashboard();toast("Note deleted.");
+    });
+    row.append(content,remove);list.appendChild(row);
+  });
+}
+
+function updateNoteCount() {
+  $("#noteCount").textContent=$("#noteBody").value.length+" characters";
+}
+
+function clearNoteEditor() {
+  activeNoteId=null;$("#noteTitle").value="";$("#noteBody").value="";updateNoteCount();
+}
+
+function saveNote() {
+  const title=$("#noteTitle").value.trim();
+  const body=$("#noteBody").value.trim();
+  if(!title&&!body)return toast("Write a title or some content first.");
+  const existing=data.notes.find(note=>note.id===activeNoteId);
+  if(existing){
+    existing.title=title;existing.body=body;existing.updated=Date.now();
+  }else{
+    const note={id:createId(),title,body,created:Date.now(),updated:Date.now()};
+    data.notes.unshift(note);activeNoteId=note.id;
+  }
+  persist();renderNotes();updateDashboard();$("#noteStatus").textContent="SAVED JUST NOW";
+  toast("Note saved locally.");
+}
+
+$("#saveNote").addEventListener("click",saveNote);
+$("#newNote").addEventListener("click",()=>{clearNoteEditor();$("#noteTitle").focus();});
+$("#noteBody").addEventListener("input",updateNoteCount);
+$("#noteTitle").addEventListener("input",()=>$("#noteStatus").textContent="UNSAVED CHANGES");
+$("#noteSearch").addEventListener("input",renderNotes);
+
+/* Productivity chart */
+function drawChart() {
+  const canvas=$("#productivityChart");
+  if(!canvas)return;
+  const rect=canvas.getBoundingClientRect();
+  const ratio=Math.min(window.devicePixelRatio||1,2);
+  const width=Math.max(260,rect.width);
+  const height=Math.max(150,rect.height);
+  canvas.width=width*ratio;canvas.height=height*ratio;
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.clearRect(0,0,width,height);
+
+  const styles=getComputedStyle(document.body);
+  const muted=styles.getPropertyValue("--muted").trim();
+  const line=styles.getPropertyValue("--line").trim();
+  const cyan=styles.getPropertyValue("--cyan").trim();
+  const purple=styles.getPropertyValue("--purple").trim();
+  const labels=[],values=[];
+  for(let offset=6;offset>=0;offset--){
+    const d=new Date();d.setDate(d.getDate()-offset);
+    labels.push(d.toLocaleDateString(undefined,{weekday:"short"}));
+    values.push(Number(data.focus.history[todayKey(d)]||0));
+  }
+  const max=Math.max(30,...values);
+  const left=12,right=8,top=12,bottom=27;
+  const chartW=width-left-right,chartH=height-top-bottom;
+  ctx.font="10px system-ui";
+  ctx.textAlign="left";ctx.textBaseline="middle";
+  for(let i=0;i<4;i++){
+    const y=top+(chartH/3)*i;
+    ctx.strokeStyle=line;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(width-right,y);ctx.stroke();
+  }
+  const slot=chartW/7;
+  const barW=Math.min(28,slot*.48);
+  values.forEach((value,i)=>{
+    const h=(value/max)*(chartH*.88);
+    const x=left+i*slot+(slot-barW)/2;
+    const y=top+chartH-h;
+    const gradient=ctx.createLinearGradient(0,y,0,top+chartH);
+    gradient.addColorStop(0,cyan);gradient.addColorStop(1,purple);
+    ctx.fillStyle=value?gradient:line;
+    ctx.beginPath();
+    if(ctx.roundRect)ctx.roundRect(x,y,barW,Math.max(2,h),[5,5,2,2]);
+    else ctx.rect(x,y,barW,Math.max(2,h));
+    ctx.fill();
+    ctx.fillStyle=muted;ctx.textAlign="center";ctx.textBaseline="top";
+    ctx.fillText(labels[i],x+barW/2,height-bottom+9);
+    if(value>0){
+      ctx.fillStyle=cyan;ctx.textBaseline="bottom";
+      ctx.fillText(String(value),x+barW/2,y-4);
+    }
+  });
+}
+window.addEventListener("resize",()=>requestAnimationFrame(drawChart));
+
+/* Dashboard calculations */
+function updateDashboard() {
+  const completed=data.tasks.filter(task=>task.done).length;
+  const total=data.tasks.length;
+  const taskPercent=total?Math.round(completed/total*100):0;
+  const focusPercent=Math.min(100,Math.round((data.focus.sessions||0)/4*100));
+  const notePercent=data.notes.length?100:0;
+  $("#sidePercent").textContent=taskPercent+"%";
+  $("#sideProgress").style.width=taskPercent+"%";
+  $("#taskBadge").textContent=taskPercent+"%";
+  $("#taskProgress").style.width=taskPercent+"%";
+  $("#focusBadge").textContent=focusPercent+"%";
+  $("#focusProgress").style.width=focusPercent+"%";
+  $("#notesBadge").textContent=notePercent+"%";
+  $("#notesProgress").style.width=notePercent+"%";
+  $("#missionCount").textContent=(total+1+Math.min(data.notes.length,1))+" MISSIONS";
+  $("#sessionsStat").textContent=data.focus.sessions||0;
+  $("#minutesStat").textContent=data.focus.minutes||0;
+  $("#focusSessions").textContent=data.focus.sessions||0;
+  $("#focusMinutes").textContent=data.focus.minutes||0;
+  drawChart();
+}
+
+/* Daily directive */
+const quotes=[
+  ["The secret of getting ahead is getting started.","MARK TWAIN"],
+  ["Great things are done by a series of small things brought together.","VINCENT VAN GOGH"],
+  ["It always seems impossible until it's done.","NELSON MANDELA"],
+  ["Focus on being productive instead of busy.","TIM FERRISS"],
+  ["Well done is better than well said.","BENJAMIN FRANKLIN"],
+  ["Action is the foundational key to all success.","PABLO PICASSO"],
+  ["You do not rise to the level of your goals. You fall to the level of your systems.","JAMES CLEAR"],
+  ["The future depends on what you do today.","MAHATMA GANDHI"],
+  ["Small disciplines repeated with consistency every day lead to great achievements.","JOHN C. MAXWELL"]
+];
+function newQuote() {
+  const quote=quotes[Math.floor(Math.random()*quotes.length)];
+  $("#dailyQuote").textContent="“"+quote[0]+"”";
+  $("#quoteAuthor").textContent="— "+quote[1];
+}
+$("#newQuote").addEventListener("click",newQuote);
+
+/* Modal system */
+function openModal(title,html) {
+  $("#modalTitle").textContent=title;
+  $("#modalBody").innerHTML=html;
+  $("#modalBackdrop").classList.add("open");
+  $("#modalClose").focus();
+}
+function closeModal() {
+  $("#modalBackdrop").classList.remove("open");
+}
+$("#modalClose").addEventListener("click",closeModal);
+$("#modalBackdrop").addEventListener("click",event=>{
+  if(event.target===$("#modalBackdrop"))closeModal();
+});
+
+function showAbout() {
+  openModal("About NEXUS OS",`
+    <div style="text-align:center;padding:10px 0 22px">
+      <div style="font-size:47px;color:var(--cyan);font-weight:950;letter-spacing:5px">NEXUS</div>
+      <div style="font-size:10px;letter-spacing:3px">PERSONAL COMMAND CENTRE</div>
+    </div>
+    <p>NEXUS OS is a futuristic, browser-based personal workspace for organizing tasks, planning time, capturing ideas, and improving focus.</p>
+    <h3>CREATOR</h3>
+    <p><strong style="color:var(--cyan)">Swarnadeep Kha</strong><br>Designed &amp; developed by Swarnadeep Kha.</p>
+    <h3>PRIVACY &amp; STORAGE</h3>
+    <p>Your tasks, notes, calendar events, settings, and focus statistics are stored in this browser using local storage. They are not automatically transmitted to a server. Clearing browser data may erase them, so use Export to create a backup.</p>
+    <h3>TECHNOLOGY</h3>
+    <p>HTML · CSS · JavaScript · Canvas · Local Storage</p>
+    <p>Live weather, cloud synchronization, accounts, cross-device data, and notifications delivered while the page is closed require additional services or permissions.</p>
+  `);
+}
+$("#aboutOpen").addEventListener("click",showAbout);
+
+/* Command palette */
+const commands=[
+  {name:"Go to overview",detail:"Open main dashboard",run:()=>navigateTo("overview")},
+  {name:"Create a task",detail:"Add a new mission",run:()=>{navigateTo("tasks");$("#taskInput").focus();}},
+  {name:"Open focus studio",detail:"Start or manage a timer",run:()=>navigateTo("focus")},
+  {name:"Open calendar",detail:"Plan your schedule",run:()=>navigateTo("calendar")},
+  {name:"Open notes vault",detail:"Capture an idea",run:()=>{navigateTo("notes");$("#noteTitle").focus();}},
+  {name:"Open analytics",detail:"View productivity chart",run:()=>navigateTo("analytics")},
+  {name:"Toggle theme",detail:"Switch light or dark appearance",run:toggleTheme},
+  {name:"Toggle motion",detail:"Reduce or restore animations",run:toggleMotion},
+  {name:"Export workspace",detail:"Download your local data",run:exportWorkspace},
+  {name:"About NEXUS",detail:"View creator and privacy details",run:showAbout}
+];
+
+function renderCommands(query="") {
+  const results=$("#commandResults");
+  if(!results)return;
+  results.replaceChildren();
+  const filtered=commands.filter(command=>(command.name+" "+command.detail).toLowerCase().includes(query.toLowerCase()));
+  filtered.forEach(command=>{
+    const button=document.createElement("button");
+    button.className="command-result";
+    const name=document.createElement("span");name.textContent=command.name;
+    const detail=document.createElement("small");detail.textContent=command.detail;
+    button.append(name,detail);
+    button.addEventListener("click",()=>{closeModal();command.run();});
+    results.appendChild(button);
+  });
+  if(!filtered.length)results.innerHTML='<div class="empty">No commands found.</div>';
+}
+
+function openCommandPalette() {
+  openModal("Command palette",`
+    <div class="command-box">
+      <input id="commandSearch" class="field" placeholder="Search commands..." autocomplete="off" aria-label="Search commands">
+    </div>
+    <div class="command-results" id="commandResults"></div>
+    <div class="small-note">Keyboard shortcut: Ctrl+K or / · Esc to close</div>
+  `);
+  renderCommands();
+  const input=$("#commandSearch");
+  input.addEventListener("input",()=>renderCommands(input.value));
+  input.focus();
+}
+$("#commandOpen").addEventListener("click",openCommandPalette);
+
+/* Keyboard shortcuts */
+document.addEventListener("keydown",event=>{
+  const target=event.target;
+  const typing=target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||target instanceof HTMLSelectElement;
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="k"){
+    event.preventDefault();openCommandPalette();return;
+  }
+  if(event.key==="Escape")closeModal();
+  if(event.key==="/"&&!typing&&!$("#modalBackdrop").classList.contains("open")){
+    event.preventDefault();openCommandPalette();
+  }
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="s"&&
+     document.activeElement.closest("#notes")){
+    event.preventDefault();saveNote();
+  }
+});
+
+/* Quick action deck */
+$$(".quick-action").forEach(button=>button.addEventListener("click",()=>{
+  const command=button.dataset.command;
+  if(command==="task"){navigateTo("tasks");$("#taskInput").focus();}
+  if(command==="focus"){navigateTo("focus");if(!timerRunning)startTimer();}
+  if(command==="note"){navigateTo("notes");$("#noteTitle").focus();}
+  if(command==="calendar"){navigateTo("calendar");}
+}));
+
+/* Workspace export/import */
+function exportWorkspace() {
+  const backup={
+    application:"NEXUS OS",
+    version:1,
+    creator:"Swarnadeep Kha",
+    exportedAt:new Date().toISOString(),
+    data
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download="nexus-os-workspace-backup.json";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+  toast("Workspace backup exported.");
+}
+$("#exportData").addEventListener("click",exportWorkspace);
+
+$("#importButton").addEventListener("click",()=>$("#importFile").click());
+$("#importFile").addEventListener("change",async event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    const imported=parsed.data||parsed;
+    if(!imported||!Array.isArray(imported.tasks)||!Array.isArray(imported.notes)||typeof imported.events!=="object"){
+      throw new Error("Invalid backup format");
+    }
+    if(!confirm("Import this backup and replace the current NEXUS workspace?"))return;
+    data=Object.assign(defaultData(),imported);
+    data.focus=Object.assign(defaultData().focus,imported.focus||{});
+    data.settings=Object.assign(defaultData().settings,imported.settings||{});
+    persist();applySettings();renderAll();
+    toast("Workspace backup imported.");
+  }catch(error){
+    toast("Import failed. Please select a valid NEXUS backup JSON file.");
+  }finally{
+    event.target.value="";
+  }
+});
+
+/* Reset */
+$("#clearData").addEventListener("click",()=>{
+  if(!confirm("Reset NEXUS OS? This permanently removes local tasks, notes, events and statistics from this browser. Export a backup first if you want to keep them."))return;
+  if(!confirm("Are you absolutely sure you want to clear all NEXUS workspace data?"))return;
+  data=defaultData();
+  persist();stopTimer();setTimer(25,"FOCUS");clearNoteEditor();
+  applySettings();renderAll();toast("Workspace reset.");
+});
+
+/* Client-side environment diagnostics */
+function updateSystemStatus() {
+  try{
+    const testKey="nexus_storage_test";
+    localStorage.setItem(testKey,"1");
+    localStorage.removeItem(testKey);
+    $("#storageState").textContent="READY";
+    $("#storageBar").style.width="100%";
+  }catch{
+    $("#storageState").textContent="LIMITED";
+    $("#storageBar").style.width="25%";
+  }
+  const online=navigator.onLine;
+  $("#networkState").textContent=online?"ONLINE":"OFFLINE";
+  $("#networkBar").style.width=online?"100%":"15%";
+  $("#screenState").textContent=window.innerWidth<600?"MOBILE":window.innerWidth<1050?"TABLET":"DESKTOP";
+  $("#screenBar").style.width=window.innerWidth<600?"35%":window.innerWidth<1050?"65%":"100%";
+}
+window.addEventListener("online",updateSystemStatus);
+window.addEventListener("offline",updateSystemStatus);
+window.addEventListener("resize",updateSystemStatus);
+
+/* Boot sequence */
+function finishBoot() {
+  $("#boot").classList.add("hide");
+}
+window.addEventListener("load",()=>setTimeout(finishBoot,1900));
+setTimeout(finishBoot,4000);
+
+/* Render all workspace modules */
+function renderAll() {
+  renderTasks();
+  renderNotes();
+  renderCalendar();
+  renderTimer();
+  updateDashboard();
+  updateNoteCount();
+  updateSystemStatus();
+}
+renderAll();
+
+/* Keep today's calendar selected when the page remains open overnight. */
+setInterval(()=>{
+  if(selectedDate!==todayKey()){
+    selectedDate=todayKey();
+    calendarView=new Date();
+    renderCalendar();
+  }
+},60000);
+
+/* Respect the operating system's reduced-motion preference by default
+   only when the user has not already saved a preference. */
+try{
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(!saved&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    data.settings.reducedMotion=true;
+    applySettings();
+  }
+}catch{}
+
+/* Creator signature: NEXUS OS — Designed & Developed by Swarnadeep Kha. */
+</script>
+</body>
+</html>
